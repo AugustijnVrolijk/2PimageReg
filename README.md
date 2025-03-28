@@ -30,3 +30,8 @@ The scripts to run the optimisation are also provided as standalone scripts call
 natively does this as seen on the "Image" tab. 
 
 Options to either save the transform object, or the transformed images are possible.
+
+## Coming Soon:
+
+- Automatic integrated ROI selection to enable tracking of neuron activity between recordings.
+- Automatic analysis on tracked ROIs including correlation of activity between recordings
