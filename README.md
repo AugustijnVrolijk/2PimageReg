@@ -6,7 +6,7 @@ Image registration is performed pairwise, i.e. at each iteration one image is se
 The current method for registration is built around affine transformations (Translation, Rotation, Scaling, Shearing) and takes part in three steps.
 
 -  Creating a "Pyramid level" representation of the images:</br>reducing their quality and initally registering the "easier" (and smaller) images before iteratively using the best found solution on the next larger image
--  Solving an initial cross correlation on the lowest Pyramid level:</br> Initially selecting the best found solution by cross-correlating the two smallest images together. This is usually done with only translation, although options are added to change this to include rotation and scaling
+-  Solving an initial cross correlation on the lowest Pyramid level:</br> Initially selecting the best found solution by cross-correlating the two smallest images together. This is usually done with only translation, It is possible to change the configuration to include rotation and scaling
 -  Iterative solving:</br> After the initial cross correlation, we optimise based on some metric by translating, rotating, scaling or shearing the images around. This is iteratively done, with the best found solution being passed down the pyramid back to the original images
 
 ## Features:
