@@ -5,10 +5,7 @@ config.metric = struct;
 config.optimiser = struct;
 config.data = struct;
 
-config.data.ExtraColumns = {};
-config.data.FetchDataCols = {};
-
-config.data.ExtraColumns = {"Date = getDate(Name)", "IDName = getIDName(Name, Date)"};
+config.data.ExtraColumns = {"IDName = getIDName(Name, Date)", "Date = getDate(Name)", "tester2 = getIDName(Name, Date)"};
 config.data.FetchDataCols = {"Image = getImg(Name, Path)", "Mask = getMask(Name, Path)"};
 
 callingFileDir = fileparts(mfilename('fullpath'));

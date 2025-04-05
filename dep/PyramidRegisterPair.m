@@ -80,7 +80,7 @@ function finalTForm = PyramidRegisterPair(fixed, moving, metric, optimizer, prog
 
     function updateWaitbar(tLevel)
         progressPercent = ((progress.iter - 1) * options.levels + tLevel) / (progress.total * options.levels);
-        message = sprintf('Registering Image: %d/%d on pyramid level: %d/%d', ...
+        message = sprintf('Registering image pair: %d/%d on pyramid level: %d/%d', ...
             progress.iter, progress.total, tLevel, options.levels);
         waitbar(progressPercent, progress.progressBar, message);
     end

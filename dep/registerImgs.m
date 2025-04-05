@@ -53,8 +53,15 @@ function imgTForms = registerImgs(inputImages, inputFixed)
         else
             %THIS IS THE BUG; THE DUPLICATE IS NOT NECESSARILY Images{1} SO
             %NEED TO LOOP THROUGH AND CHECK
-            if isequal(images{1}, fixed{:})
-                images = images(2:end);
+            toRemove = [];
+            for j=1:length(images)
+                if isequal(images{j}, fixed{:})
+                    toRemove = [toRemove; j];
+                end
+            end
+            for j=1:length(toRemove)
+                warning("Removed image: %d; This image was the same as the pivot",toRemove(j));
+                images(toRemove(j)) = [];
             end
             nPairs = length(images);
             fixedClean = cell(nPairs, 1);
