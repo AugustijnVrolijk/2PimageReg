@@ -13,7 +13,7 @@ function imgTForms = registerImgs(inputImages, inputFixed)
 
     imgTForms((nImages + 1), 1) = affinetform2d(); %one extra to include the fixed image, it will have a blank transform
     
-    [optimizer, metric] = imregconfig("monomodal");   
+    [optimizer, metric] = imregconfig("monomodal");
     nLevels = 4;
 
     for i=1:nImages
