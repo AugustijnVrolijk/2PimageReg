@@ -181,7 +181,7 @@ classdef basicQueue < handle
             %bug, if back is on the last index, and one is removed, then it
             %is no longer pointing to a valid value so need to check
             if obj.back >= idx
-                obj.back = mod(obj.back - 1);
+                obj.back = mod(obj.back - 1, obj.size);
                 
                 %another edge case where it gets pushed back to 0
                 if obj.back == 0

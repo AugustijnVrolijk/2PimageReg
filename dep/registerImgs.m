@@ -7,7 +7,7 @@ function imgTForms = registerImgs(inputImages, inputFixed)
         imgTForms (:, 1) affinetform2d
     end
     progressBar = waitbar(0, "Initialising ...");
-    [fixedCell, movingCell] = resolveImagePairs(inputFixed, inputImages);
+    [fixedCell, movingCell, isPivot] = resolveImagePairs(inputFixed, inputImages);
     %THERE IS A BUG HERE CHECK IN RESOLVEIMAGEPAIRS
     nImages = length(movingCell);
 
@@ -17,7 +17,8 @@ function imgTForms = registerImgs(inputImages, inputFixed)
     nLevels = 4;
 
     for i=1:nImages
-        [fixedWarp, movingWarp] = warpPair(fixedCell{i}, movingCell{i}, imgTForms(i));
+      
+        [fixedWarp, movingWarp] = warpPair(fixedCell{i}, movingCell{i}, imgTForms(i), isPivot);
 
         progress = struct('iter',i,'total',nImages,'progressBar',progressBar);
         newTForm = PyramidRegisterPair(fixedWarp, movingWarp, metric, optimizer,progress,levels=nLevels,transform="affine");
@@ -28,7 +29,7 @@ function imgTForms = registerImgs(inputImages, inputFixed)
     end
     close(progressBar)
 
-    function [fixedClean, movingClean] = resolveImagePairs(fixed, images)
+    function [fixedClean, movingClean, isPivot] = resolveImagePairs(fixed, images)
         %{
         I want two arrays:
                     A:                                  B:
@@ -40,6 +41,10 @@ function imgTForms = registerImgs(inputImages, inputFixed)
             Fixed is given - not duplicate in Images - option A
             Fixed is given - is duplicate in Images - option A
         %}
+        %FLAG IS GIVEN AS THE MAIN LOOP NEEDS TO ACT DIFFERENTLY IF THE
+        %PIVOT  IS ALWAYS THE SAME OR NOT, otherwise it registers to a
+        %basearray of actually unregistered images.
+
         if length(fixed) >= 2
             error("only one image can be selected as the 'pivot'");
         elseif isequal(fixed{1}, 0)
@@ -50,6 +55,7 @@ function imgTForms = registerImgs(inputImages, inputFixed)
                 fixedClean{j} = images{j};
                 movingClean{j} = images{j + 1};
             end
+            isPivot = false;
         else
             %THIS IS THE BUG; THE DUPLICATE IS NOT NECESSARILY Images{1} SO
             %NEED TO LOOP THROUGH AND CHECK
@@ -70,34 +76,20 @@ function imgTForms = registerImgs(inputImages, inputFixed)
                 fixedClean{j} = fixed{:};
                 movingClean{j} = images{j};
             end
+            isPivot = true;
         end
     end
 
-    function [fixedWarp, movingWarp] = warpPair(fixed, moving, tForm)
+    function [fixedWarp, movingWarp] = warpPair(fixed, moving, tForm, isPivot)
         noChange = affinetform2d();
         fixedView = affineOutputView(size(fixed),noChange,"BoundsStyle","FollowOutput");
         movingView = affineOutputView(size(moving),tForm,"BoundsStyle","FollowOutput");
         finalOutputView = getLargestImgRef([fixedView, movingView]);
-        fixedWarp = imwarp(fixed, noChange, "OutputView", finalOutputView);
+        if isPivot
+            fixedWarp = imwarp(fixed, noChange, "OutputView", finalOutputView);
+        else
+            fixedWarp = imwarp(fixed, tForm, "OutputView", finalOutputView);
+        end
         movingWarp = imwarp(moving, tForm, "OutputView", finalOutputView);     
     end
-
-    function finalImgRef = getLargestImgRef(ImgRefs)
-        %first retrieve the world limit property into a 2*n matirx, then
-        %reshape to an array of 1*2n. 
-        XWorldLimitsArray = reshape(vertcat(ImgRefs.XWorldLimits), 1, []);
-        YWorldLimitsArray = reshape(vertcat(ImgRefs.YWorldLimits), 1, []);
-        %retrieve the range in coords to find the smallest and largest coord
-        %needed to fit everything, round it to remove small fraction errors
-        [xWorldmin, xWorldmax] = bounds(round(XWorldLimitsArray));
-        [yWorldmin, yWorldmax] = bounds(round(YWorldLimitsArray));
-        %calculate size
-        xSize = xWorldmax - xWorldmin;
-        ySize = yWorldmax - yWorldmin;
-        finalImgRef = imref2d([ySize xSize], [xWorldmin, xWorldmax], [yWorldmin, yWorldmax]);
-        if finalImgRef.PixelExtentInWorldX ~= 1 || finalImgRef.PixelExtentInWorldY ~= 1
-            error('the calculated Pixel extent is wrong, this is a bug');
-        end
-    end
-
 end
