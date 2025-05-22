@@ -57,6 +57,32 @@ classdef basicQueue < handle
 
     methods (Access = public)
         
+        function bulkRemoveAndReassign(obj, selection)
+            %exclusively used when imRegApp deletes rows, as such the ID's
+            %get changed so I need to change it in this object
+            selection = sort(selection);
+            tselection = intersect(selection, obj.vals);
+            
+            %remove the rows with indices in the queue
+            for i=1:length(tselection)
+               obj.remove(tselection(i))
+            end
+            
+            %shift indice value by the required amount
+            for i=1:length(obj.vals)
+                correction = sum(selection < obj.vals(i));
+                obj.vals(i) = obj.vals(i) - correction;
+            end
+
+            obj.size = obj.size - length(tselection);
+            if obj.size < obj.len
+                disp(obj.size)
+                disp(obj.len)
+                disp(obj.getState)
+                error("this is a bug with bulkRemoveAndReassign")
+            end
+        end
+
         function loadState(obj, state)
             obj.vals = state.vals;
             obj.back = state.back ;
@@ -167,13 +193,7 @@ classdef basicQueue < handle
                 warning("the given value was not found in the queue")
                 return
             end
-            
-          
 
-            fprintf("val: %d; idx: %d", val, idx);
-            tempState = obj.getState();
-            disp(tempState)
-            
             obj.vals(idx) = [];
             obj.len = obj.len - 1;
             obj.size = obj.size - 1; %pop does modulo operation based on size, so need to change
