@@ -28,7 +28,7 @@ classdef basicQueue < handle
 
             tempVals = zeros(1, size);
             tLen = obj.len;
-   
+            
             for iter = 1:tLen
                 tempVals(iter) = obj.pop();
             end
@@ -64,8 +64,14 @@ classdef basicQueue < handle
             tselection = intersect(selection, obj.vals);
             
             %remove the rows with indices in the queue
+            obj.rewrite()
+
             for i=1:length(tselection)
-               obj.remove(tselection(i))
+                idx = find(obj.vals == tselection(i));
+                obj.vals(idx) = [];
+                obj.len = obj.len - 1;
+                obj.front = obj.front - 1;
+                obj.size = obj.size - 1;
             end
             
             %shift indice value by the required amount
@@ -74,7 +80,6 @@ classdef basicQueue < handle
                 obj.vals(i) = obj.vals(i) - correction;
             end
 
-            obj.size = obj.size - length(tselection);
             if obj.size < obj.len
                 disp(obj.size)
                 disp(obj.len)
@@ -176,6 +181,7 @@ classdef basicQueue < handle
             end
 
             val = obj.vals(obj.back);
+            obj.vals(obj.back) = 0;
             obj.len = obj.len - 1;
             obj.back = mod(obj.back, obj.size) + 1;
 
@@ -186,6 +192,8 @@ classdef basicQueue < handle
             if val == 0
                 error("can't remove 0 from the queue")
             end
+            obj.rewrite()
+
             idx = find(obj.vals == val);
             if length(idx) > 1
                 error("duplicate values in the queue")
@@ -194,22 +202,10 @@ classdef basicQueue < handle
                 return
             end
 
+            
             obj.vals(idx) = [];
             obj.len = obj.len - 1;
-            obj.size = obj.size - 1; %pop does modulo operation based on size, so need to change
-
-            %bug, if back is on the last index, and one is removed, then it
-            %is no longer pointing to a valid value so need to check
-            if obj.back >= idx
-                obj.back = mod(obj.back - 1, obj.size);
-                
-                %another edge case where it gets pushed back to 0
-                if obj.back == 0
-                    obj.back = obj.len;
-                end
-            end
-            
-            obj.rewrite(obj.size + 1)
+            obj.front = obj.front - 1;
         end
     end
 end
