@@ -7,6 +7,7 @@ function finalTForm = PyramidRegisterPair(fixed, moving, metric, optimizer, prog
         progress = struct();
         options.levels double = 4
         options.transform string = "affine"
+        options.crossCTransform string = "translation"
     end
     arguments (Output)
         finalTForm affinetform2d
@@ -40,7 +41,7 @@ function finalTForm = PyramidRegisterPair(fixed, moving, metric, optimizer, prog
         level = 1;
         updateWaitbar(level);
     end  
-    curTForm = imregcorr(pyramidImgTable.moving{options.levels},pyramidImgTable.fixed{options.levels}, "translation");
+    curTForm = imregcorr(pyramidImgTable.moving{options.levels},pyramidImgTable.fixed{options.levels},options.crossCTransform);
 
     for i = options.levels-1:-1:1
         if ~isequal(progress.progressBar, 0)

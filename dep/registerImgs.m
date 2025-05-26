@@ -1,33 +1,56 @@
-function imgTForms = registerImgs(inputImages, inputFixed)
+function imgTForms = registerImgs(inputImages, inputFixed, metric, optimizer, options)
     arguments (Input)
         inputImages (:, 1) cell
         inputFixed (1, 1) cell = {0}
+        metric = []
+        optimizer = []
+        options.levels double = 4
+        options.transform string = "affine"
+        options.crossCTransform string = "translation"
+        options.progressBar = 0;
     end
     arguments (Output)
         imgTForms (:, 1) affinetform2d
     end
-    progressBar = waitbar(0, "Initialising ...");
+    
+    progExist = true;
+    if isequal(options.progressBar, 0)
+        disp("we are here and we shouldn't")
+        progExist = false;
+        options.progressBar = waitbar(0, "Initialising ...");
+    end
+
+    [defaultOptimizer, defaultMetric] = imregconfig("monomodal");
+    if isempty(optimizer)
+        optimizer = defaultOptimizer;
+    end
+    if isempty(metric)
+        metric = defaultMetric;
+    end
+
     [fixedCell, movingCell, isPivot] = resolveImagePairs(inputFixed, inputImages);
-    %THERE IS A BUG HERE CHECK IN RESOLVEIMAGEPAIRS
     nImages = length(movingCell);
 
     imgTForms((nImages + 1), 1) = affinetform2d(); %one extra to include the fixed image, it will have a blank transform
     
-    [optimizer, metric] = imregconfig("monomodal");
-    nLevels = 4;
-
     for i=1:nImages
       
         [fixedWarp, movingWarp] = warpPair(fixedCell{i}, movingCell{i}, imgTForms(i), isPivot);
 
-        progress = struct('iter',i,'total',nImages,'progressBar',progressBar);
-        newTForm = PyramidRegisterPair(fixedWarp, movingWarp, metric, optimizer,progress,levels=nLevels,transform="affine");
+        progress = struct('iter',i,'total',nImages,'progressBar',options.progressBar);
+
+        newTForm = PyramidRegisterPair(fixedWarp, movingWarp, metric, optimizer, ...
+            progress,levels=options.levels,transform=options.transform, ...
+            crossCTransform=options.crossCTransform);
         
         nextTForm = affinetform2d(imgTForms(i).A*newTForm.A);
 
         imgTForms(i+1) = nextTForm;
     end
-    close(progressBar)
+    
+    if ~progExist
+        close(options.progressBar)
+    end
 
     function [fixedClean, movingClean, isPivot] = resolveImagePairs(fixed, images)
         %{
