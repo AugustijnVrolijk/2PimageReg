@@ -1,4 +1,4 @@
-function filedates = findDate(filenames)
+function filedates = getDate(filenames)
     % Find filedates that is hidden somewhere in filename
     % Format: yyyyMMdd  = 20220708
     % 
@@ -12,14 +12,15 @@ function filedates = findDate(filenames)
         filenames (:, 1) string 
     end
     arguments (Output)
-        filedates (:, 1) datetime
+        filedates (:, 1) cell
     end
     
     desiredLength = 8; %hardcoded as this is the expected format
     desiredFormat = 'yyyyMMdd';
     nFiles = length(filenames);
     
-    filedates = NaT(nFiles, 1, 'Format',desiredFormat);
+    filedates = cell(nFiles, 1);
+    %NaT(nFiles, 1, 'Format',desiredFormat);
     for i=1:nFiles
         filename = filenames{i};
         
@@ -35,7 +36,7 @@ function filedates = findDate(filenames)
         end
         
         try % try to decipher user input as a datetime
-            filedates(i) = datetime(strdate, 'inputformat','yyyyMMdd');
+            filedates{i} = datetime(strdate, 'inputformat','yyyyMMdd');
         catch METOO % another error: No date for this recording.
             warning('User input not recognized as date')
         end
@@ -76,4 +77,27 @@ function filedates = findDate(filenames)
             end
         end
     end
+
+    function strOut = FindNNumInStr(str, n)
+        % Find a number that is exactly n digits long in a string
+        % 
+        % 
+        % Leander de Kraker
+        % 2022-7-15
+        % 
+        
+        % Get info about the digits in the string
+        pos = regexp(str, '\d');
+        a=diff(pos);
+        b=find([a inf]>1);
+        c=diff([0 b]); % length of the sequences
+        good = pos(b(c==n));
+        
+        if isscalar(good)
+            strOut = str(good-n+1:good);
+        else
+            strOut = [];
+        end
+    end
+
 end

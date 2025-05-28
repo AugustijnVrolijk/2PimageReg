@@ -7,12 +7,12 @@ function config = resetConfig()
     config.register.metric = metric;
     config.register.optimiser = optimiser;
     config.register.levels = 4;
-    config.register.transform = "affine"; %options include: "translation", "rigid", "similarity", "affine"
-    config.register.crossCTransform = "translation"; %options include: "translation", "rigid", "similarity"
+    config.register.transform = "affine";
+    config.register.crossCTransform = "translation";
     
     
     config.data = struct;
-    config.data.ExtraColumns = {};  %"IDName = getIDName(Name, Date)", "Date = getDate(Name)"
+    config.data.ExtraColumns = {"IDName = getIDName(Name, Date)", "Date = getDate(Name)"};
     config.data.FetchDataCols = {"Image = getImg(Name, Path)", "Mask = getMask(Name, Path)"};
     
     if ispref('imageReg2P', 'default_config')

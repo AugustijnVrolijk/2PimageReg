@@ -1,36 +1,42 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2079871603" file="C:\Users\augus\NIN_Stuff\SpectralSegmentation\chronic\ImageRegistrationApp\imageReg2p.prj" location="C:\Users\augus\NIN_Stuff\SpectralSegmentation\chronic\ImageRegistrationApp" name="imageReg2p" target="target.mlapps" target-name="Package App">
-    <param.appname>imageReg2P</param.appname>
+  <configuration build-checksum="1544238813" file="C:\Users\augus\NIN_Stuff\SpectralSegmentation\chronic\ImageRegistrationApp\ImageReg2P.prj" location="C:\Users\augus\NIN_Stuff\SpectralSegmentation\chronic\ImageRegistrationApp" name="ImageReg2P" target="target.mlapps" target-name="Package App">
+    <param.appname>ImageReg2P</param.appname>
     <param.authnamewatermark>Augustijn Vrolijk</param.authnamewatermark>
     <param.email>a.vrolijk@nin.knaw.nl</param.email>
     <param.company>Nederlandse Herseninstituut</param.company>
     <param.icon />
     <param.icons />
-    <param.summary>tools and GUI enabling the registration of two-photon microscopy recordings.</param.summary>
+    <param.summary>GUI enabling automatic image registration for two-photon microscopy recordings</param.summary>
     <param.description />
     <param.screenshot />
     <param.version>1.0</param.version>
-    <param.products.name />
-    <param.products.id />
-    <param.products.version />
+    <param.products.name>
+      <item>Image Processing Toolbox</item>
+    </param.products.name>
+    <param.products.id>
+      <item>17</item>
+    </param.products.id>
+    <param.products.version>
+      <item>24.2</item>
+    </param.products.version>
     <param.platforms />
     <param.output>${PROJECT_ROOT}\finished_app</param.output>
-    <param.guid>d12a7fa4-6d71-48d2-b74b-02861dd441b2</param.guid>
+    <param.guid>7febb115-2cee-4f77-8d72-9c52b2b2eae6</param.guid>
     <unset>
       <param.icon />
       <param.icons />
       <param.description />
       <param.screenshot />
       <param.version />
-      <param.products.name />
-      <param.products.id />
-      <param.products.version />
       <param.platforms />
     </unset>
     <fileset.main>
       <file>${PROJECT_ROOT}\imgRegMain.mlapp</file>
     </fileset.main>
-    <fileset.depfun />
+    <fileset.depfun>
+      <file>C:\Users\augus\NIN_Stuff\SpectralSegmentation\util\dep\cmapL.m</file>
+      <file>C:\Users\augus\NIN_Stuff\SpectralSegmentation\util\dep\CreateRGB2.m</file>
+    </fileset.depfun>
     <fileset.resources>
       <file>${PROJECT_ROOT}\config</file>
       <file>${PROJECT_ROOT}\dep</file>
