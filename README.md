@@ -40,3 +40,7 @@ An integrated image tab allows you to verify the optimisation as well as selecti
 
 - Automatic integrated ROI selection to enable tracking of neuron activity between recordings.
 - Automatic analysis on tracked ROIs including correlation of activity between recordings
+
+## Testimonials:
+
+- Leander: "Barely an inconvenience to install"
